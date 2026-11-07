@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="{{ app()->getLocale() }}">
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+
+    <!-- CSRF Token -->
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
+    <title>@yield('title') - {{ config('app.name', 'POS') }}</title>
+
+    @include('layouts.partials.css')
+    @include('layouts.partials.pwa-meta')
+
+    @include('layouts.partials.extracss_auth')
+
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <script src='https://www.google.com/recaptcha/api.js'></script>
+
+</head>
+
+<body class="pace-done" data-new-gr-c-s-check-loaded="14.1172.0" data-gr-ext-installed="" cz-shortcut-listen="true">
+    @inject('request', 'Illuminate\Http\Request')
+    @if (session('status') && session('status.success'))
+        <input type="hidden" id="status_span" data-status="{{ session('status.success') }}"
+            data-msg="{{ session('status.msg') }}">
+    @endif
+    {{-- Header Bar --}}
+    <div class="tw-bg-gradient-to-r tw-from-indigo-600 tw-to-blue-500 tw-py-3 tw-shadow-lg">
+        <div class="tw-container tw-mx-auto tw-flex tw-justify-between tw-items-center" style="padding: 0 15px;">
+
+            {{-- LEFT: Logo + links --}}
+            <div class="tw-flex tw-items-center tw-gap-4">
+                <a href="{{ url('/') }}">
+                    <img src="{{ asset('img/logo-small.png') }}" alt="Logo"
+                         class="tw-w-11 tw-h-11 tw-rounded-full tw-object-cover tw-bg-white tw-p-0.5 tw-shadow">
+                </a>
+
+                @if(config('constants.SHOW_REPAIR_STATUS_LOGIN_SCREEN') && Route::has('repair-status'))
+                    <a class="tw-text-white tw-font-medium tw-text-sm hover:tw-text-white"
+                       href="{{ action([\Modules\Repair\Http\Controllers\CustomerRepairStatusController::class, 'index']) }}">
+                        @lang('repair::lang.repair_status')
+                    </a>
+                @endif
+
+                @if(Route::has('member_scanner'))
+                    <a class="tw-text-white tw-font-medium tw-text-sm hover:tw-text-white"
+                       href="{{ action([\Modules\Gym\Http\Controllers\MemberController::class, 'member_scanner']) }}">
+                        @lang('gym::lang.gym_member_profile')
+                    </a>
+                @endif
+
+                {{-- FBR Verify --}}
+                <div class="tw-border-2 tw-border-white tw-rounded-full tw-h-10 tw-px-4 tw-flex tw-items-center tw-justify-center">
+                    <a href="https://iris.fbr.gov.pk/#verifications" target="_blank"
+                       title="{{ __('Under the 10TH tab (POS Invoice Verification)') }}"
+                       class="tw-text-white tw-font-medium tw-text-sm hover:tw-text-white tw-whitespace-nowrap">
+                        {{ __('Verify FBR Invoice') }}
+                    </a>
+                </div>
+
+                <a class="tw-text-white tw-font-medium tw-text-sm hover:tw-text-white"
+                   href="https://support.jadidkhata.com/" target="_blank" rel="noopener">
+                    @lang('Support')
+                </a>
+
+                {{-- Install App --}}
+                @if(Route::has('pwa.install'))
+                    <div class="tw-border-2 tw-border-white tw-rounded-full tw-h-10 tw-px-4 tw-flex tw-items-center tw-justify-center tw-gap-1">
+                        <a href="{{ route('pwa.install') }}"
+                           class="tw-text-white tw-font-medium tw-text-sm hover:tw-text-white tw-flex tw-items-center tw-gap-1 tw-whitespace-nowrap">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="tw-w-4 tw-h-4 tw-flex-shrink-0" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                <path d="M12 3v12"/><path d="M8 11l4 4l4 -4"/><path d="M6 19h12"/>
+                            </svg>
+                            Install App
+                        </a>
+                    </div>
+                @endif
+            </div>
+
+            {{-- RIGHT: Register + Pricing + Language --}}
+            <div class="tw-flex tw-items-center tw-gap-4">
+                @if (!($request->segment(1) == 'business' && $request->segment(2) == 'register'))
+                    @if (config('constants.allow_registration'))
+                        <div class="tw-border-2 tw-border-white tw-rounded-full tw-h-10 tw-px-5 tw-flex tw-items-center tw-justify-center">
+                            <a href="{{ route('business.getRegister') }}@if(!empty(request()->lang)){{'?lang='.request()->lang}}@endif"
+                               class="tw-text-white tw-font-medium tw-text-sm hover:tw-text-white">
+                                {{ __('business.register') }}
+                            </a>
+                        </div>
+                        @if (Route::has('pricing') && config('app.env') != 'demo' && $request->segment(1) != 'pricing')
+                            <a class="tw-text-white tw-font-medium tw-text-sm hover:tw-text-white"
+                               href="{{ action([\Modules\Superadmin\Http\Controllers\PricingController::class, 'index']) }}">
+                                @lang('superadmin::lang.pricing')
+                            </a>
+                        @endif
+                    @endif
+                @endif
+                @if ($request->segment(1) != 'login')
+                    <a class="tw-text-white tw-font-medium tw-text-sm hover:tw-text-white"
+                       href="{{ action([\App\Http\Controllers\Auth\LoginController::class, 'login']) }}@if(!empty(request()->lang)){{'?lang='.request()->lang}}@endif">
+                        {{ __('business.sign_in') }}
+                    </a>
+                @endif
+                @include('layouts.partials.language_btn')
+            </div>
+        </div>
+    </div>
+
+    {{-- Page content --}}
+    <div class="container-fluid">
+        <div class="row eq-height-row">
+            <div class="col-md-12 col-sm-12 col-xs-12 right-col tw-pb-10 tw-px-5">
+                @yield('content')
+            </div>
+        </div>
+        <footer class="row footer">
+            <h3>For any Assistance 24/7 SUPPORT Please Call/Whatsapp: +44 7853748116</h3>
+        </footer>
+    </div>
+
+
+    @include('layouts.partials.javascripts')
+
+    <!-- Scripts -->
+    <script src="{{ asset('js/login.js?v=' . $asset_v) }}"></script>
+
+    @yield('javascript')
+
+    @include('layouts.partials.pwa-scripts')
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $('.select2_register').select2();
+
+            // $('input').iCheck({
+            //     checkboxClass: 'icheckbox_square-blue',
+            //     radioClass: 'iradio_square-blue',
+            //     increaseArea: '20%' // optional
+            // });
+        });
+    </script>
+    <style>
+        .wizard>.content {
+            background-color: white !important;
+        }
+                 body {
+            /* background-image: url('https://business.jadidkhata.com/img/bg_img.jpeg') !important; */
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center;
+            height: auto;
+        } 
+        .footer {
+            text-align: center;
+            font-weight: bold;
+            font-size: larger !important;
+            background-color: orange;
+
+            bottom: 0;
+            height: 60px; /* Adjust the height as needed */
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            box-shadow: 0 -2px 5px rgba(0,0,0,0.1); /* Optional shadow for better visual */
+             
+        }
+        .footer h3 {
+            margin: 0;
+        }
+    </style>
+</body>
+
+</html>

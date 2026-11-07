@@ -1,0 +1,16 @@
+{
+    "name": "FieldForce",
+    "alias": "fieldforce",
+    "description": "",
+    "keywords": [],
+    "active": 1,
+    "order": 0,
+    "providers": [
+        "Modules\\FieldForce\\Providers\\FieldForceServiceProvider"
+    ],
+    "aliases": {},
+    "files": [
+        "Helpers/general_helper.php"
+    ],
+    "requires": []
+}

@@ -1,0 +1,63 @@
+{
+  "name": "jadid-khata-pos",
+  "version": "1.0.0",
+  "description": "Jadid Khata - Offline Desktop POS",
+  "main": "electron/main.js",
+  "scripts": {
+    "start": "node electron/runner.js",
+    "build:exe": "electron-builder --win --x64"
+  },
+  "build": {
+    "appId": "com.jadidkhata.pos",
+    "productName": "Jadid Khata POS",
+    "asar": false,
+    "directories": {
+      "output": "dist-desktop"
+    },
+    "win": {
+      "target": "nsis"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Jadid Khata POS"
+    },
+    "files": [
+      "bin/**/*",
+      "electron/**/*",
+      "app/**/*",
+      "bootstrap/**/*",
+      "config/**/*",
+      "database/**/*",
+      "lang/**/*",
+      "Modules/**/*",
+      "public/**/*",
+      "!public/**/*.sql",
+      "!public/error_log",
+      "!**/*.sql",
+      "!**/tests/**/*",
+      "!storage/logs/**/*",
+      "resources/**/*",
+      "routes/**/*",
+      "storage/**/*",
+      "vendor/**/*",
+      ".env",
+      "artisan",
+      "package.json"
+    ]
+  },
+  "keywords": [
+    "pos",
+    "offline",
+    "desktop"
+  ],
+  "author": "Jadid Khata",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "electron": "^45.2.3",
+    "electron-builder": "^26.18.0"
+  }
+}

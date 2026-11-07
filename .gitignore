@@ -1,0 +1,25 @@
+# Large build artifacts & binaries (>100MB GitHub limit)
+dist-desktop/
+**/dist-desktop/
+bin/
+**/bin/
+
+# Dependencies
+node_modules/
+**/node_modules/
+vendor/
+**/vendor/
+
+# Database dumps
+*.sql
+
+# Secrets & Environment
+.env
+**/.env
+
+# Logs & Framework cache
+*.log
+**/storage/logs/*
+**/storage/framework/cache/*
+**/storage/framework/sessions/*
+**/storage/framework/views/*

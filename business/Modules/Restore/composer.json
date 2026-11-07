@@ -1,0 +1,13 @@
+{
+  "name": "restore/module",
+  "description": "Restore module for the application",
+  "type": "laravel-module",
+  "require": {
+    "php": "^7.4|^8.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "Modules\\Restore\\": ""
+    }
+  }
+}

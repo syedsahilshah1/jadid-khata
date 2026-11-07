@@ -1,0 +1,16 @@
+{
+    "name": "WhatsApp",
+    "alias": "whatsapp",
+    "description": "Allow to connect whatsapp api from WaSender & WAMD [DreamCasters]",
+    "keywords": [],
+    "active": 1,
+    "order": 0,
+    "priority": 0,
+    "providers": [
+        "Modules\\WhatsApp\\Providers\\WhatsAppServiceProvider",
+        "Modules\\WhatsApp\\Providers\\EventServiceProvider"
+    ],
+    "files": [
+        "Helpers/Helpers.php"
+    ]
+}

@@ -1,0 +1,25 @@
+{
+    "name": "pnn/fieldforce",
+    "description": "",
+    "authors": [
+        {
+            "name": "PNN Solutions",
+            "email": "mail.pnnsolutions@gmail.com"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Modules\\FieldForce\\Providers\\FieldForceServiceProvider"
+            ],
+            "aliases": {
+                
+            }
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Modules\\FieldForce\\": ""
+        }
+    }
+}

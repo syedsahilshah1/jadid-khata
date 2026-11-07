@@ -1,0 +1,11 @@
+{
+    "name": "ProfitFix",
+    "alias": "profitfix",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\ProfitFix\\Providers\\ProfitFixServiceProvider"
+    ],
+    "files": []
+}

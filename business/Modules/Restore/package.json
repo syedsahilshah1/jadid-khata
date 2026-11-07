@@ -1,0 +1,14 @@
+{
+  "name": "restore-module",
+  "version": "1.0.2",
+  "description": "Frontend assets for the Restore module",
+  "main": "index.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "vite": "^4.0.0"
+  }
+}

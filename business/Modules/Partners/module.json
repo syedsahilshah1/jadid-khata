@@ -1,0 +1,14 @@
+{
+    "name": "Partners",
+    "alias":"partners",
+    "description": "Partners Management Module for UltimatePOS | Contact me on WhatsApp : +919579088617 | WhatsApp link : https://wa.link/6mu9g9",
+    "keywords": [],
+    "active": 1,
+    "order": 0,
+    "providers": [
+        "Modules\\Partners\\Providers\\PartnersServiceProvider"
+    ],
+    "aliases": [],
+    "files": [],
+    "requires": []
+}

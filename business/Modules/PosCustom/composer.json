@@ -1,0 +1,23 @@
+{
+    "name": "JCN/PosCustom",
+    "description": "",
+    "authors": [
+        {
+            "name": "By JoCaNi",
+            "email": "xxxxx@gmail.com"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [],
+            "aliases": {
+
+            }
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Modules\\PosCustom\\": ""
+        }
+    }
+}

@@ -1,0 +1,14 @@
+{
+    "name": "Cms",
+    "alias": "cms",
+    "description": "Mini CMS (content management system) Module for UltimatePOS to help manage all frontend contents like Landing page, Blogs, Contact us & many other pages. Nulled by Omkar https://wa.me/919822491553",
+    "keywords": [],
+    "active": 1,
+    "order": 0,
+    "providers": [
+        "Modules\\Cms\\Providers\\CmsServiceProvider"
+    ],
+    "aliases": {},
+    "files": [],
+    "requires": []
+}

@@ -1,0 +1,137 @@
+@extends('layouts.install')
+@section('title', 'Installation')
+
+@section('content')
+<div class="container">
+  <div class="row">
+
+    <div class="col-md-8 col-md-offset-2">
+      <br /><br />
+
+      <div class="box box-primary active">
+        <!-- /.box-header -->
+        <div class="box-body">
+
+          @if(session('error'))
+          <div class="alert alert-danger">
+            {!! session('error') !!}
+          </div>
+          @endif
+
+          @if ($errors->any())
+          <div class="alert alert-danger">
+            <ul>
+              @foreach ($errors->all() as $error)
+              <li>{{ $error }}</li>
+              @endforeach
+            </ul>
+          </div>
+          @endif
+
+          <form class="form" id="details_form" method="post" action="{{$action_url}}">
+            {{ csrf_field() }}
+
+            <h4> License Details <small class="text-danger">Make sure to provide correct licensing information</small></h4>
+            <hr />
+
+            <div class="col-md-4">
+              <div class="form-group">
+                <label for="license_code">License Code:*</label>
+                <input type="text" name="license_code" required class="form-control" id="license_code">
+
+
+              </div>
+            </div>
+
+
+
+
+            <div class="col-md-4">
+              <div class="form-group">
+                <label for="envato_email">Your Email:*</label>
+                <input type="email" name="email" class="form-control" id="envato_email">
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="form-group">
+                <label for="login_username"> Phone Number:*</label>
+                <input type="text" name="phone" required class="form-control" id="login_username">
+                <input type="text" name="domain" id="domain" hidden readonly>
+
+
+              </div>
+            </div>
+            {{-- @include('install.partials.e_license') --}}
+
+            <div class="col-md-12">
+              <button type="submit" id="install_button" class="btn btn-primary pull-right">I Agree, Install</button>
+            </div>
+          </form>
+        </div>
+        <!-- /.box-body -->
+      </div>
+
+
+    </div>
+
+  </div>
+</div>
+
+<div class="container" style="text-align:center;position: absolute; bottom:20px;width:100%">
+  <div class="row" style="margin: auto;">
+    <footer class="bg-dark text-light text-center py-3" style="">
+
+      <a href="https://hooksource.com/">
+        <p class="">
+          This module was programmed and developed by Ashalpro in cooperation with Hooksource
+        </p>
+
+      </a>
+      <p>
+        If you encounter any problems, please contact us via WhatsApp : <a href="https://wa.me/201144420094" target="_blank">+201144420094</a> 
+      </p>
+
+    </footer>
+  </div>
+
+</div>
+
+@endsection
+
+@section('javascript')
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('form#details_form').submit(function() {
+      $('button#install_button').attr('disabled', true).text('Installing...');
+      $('div.install_msg').removeClass('hide');
+      $('.back_button').hide();
+    });
+  })
+</script>
+<script>
+  function extractBaseDomain() {
+    // Get the current host from the browser's URL
+    var fullDomain = window.location.hostname;
+
+    // Use a regular expression to extract the base domain
+    var baseDomain = fullDomain.match(/^(?:www\.)?(.*)$/);
+
+    // Check if a match is found
+    if (baseDomain && baseDomain[1]) {
+      var baseDomainValue = baseDomain[1];
+
+      // Set the value of the input field
+      document.getElementById("domain").value = baseDomainValue;
+
+
+    } else {
+      alert("Unable to extract base domain from the current URL.");
+    }
+  }
+
+  // Call the function when the page is loaded
+  window.onload = function() {
+    extractBaseDomain();
+  };
+</script>
+@endsection

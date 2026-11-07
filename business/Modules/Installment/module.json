@@ -1,0 +1,16 @@
+{
+    "name": "Installment",
+    "alias": "installment",
+    "description": "Installment Management Module for UltimatePOS",
+    "keywords": [],
+    "active": 1,
+    "order": 0,
+    "providers": [
+        "Modules\\Installment\\Providers\\InstallmentServiceProvider"
+    ],
+    "aliases": {},
+    "files": [
+        "Helpers/general_helper.php"
+    ],
+    "requires": []
+}

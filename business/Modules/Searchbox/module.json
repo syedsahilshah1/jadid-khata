@@ -1,0 +1,14 @@
+{
+    "name": "Searchbox",
+    "alias": "searchbox",
+    "description": "Global universal search across products, contacts, sales, purchases, and related records.",
+    "keywords": ["search", "universal search", "global search"],
+    "active": 1,
+    "order": 0,
+    "providers": [
+        "Modules\\Searchbox\\Providers\\SearchboxServiceProvider"
+    ],
+    "aliases": {},
+    "files": [],
+    "requires": []
+}

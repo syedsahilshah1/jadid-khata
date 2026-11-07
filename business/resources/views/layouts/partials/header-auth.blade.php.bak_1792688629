@@ -1,0 +1,63 @@
+@inject('request', 'Illuminate\Http\Request')
+
+<style>
+/* HEADER-AUTH-RESPONSIVE */
+.header-auth-outer { background: linear-gradient(to right, #4f46e5, #3b82f6); padding: 10px 0; box-shadow: 0 4px 6px -1px rgba(0,0,0,.1); position: relative; z-index: 10; }
+.header-auth-row { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; max-width: 1200px; margin: 0 auto; padding: 0 15px; }
+.header-auth-row > div { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.header-auth-row a { color: #fff; font-weight: 500; font-size: 13px; text-decoration: none; white-space: nowrap; }
+.header-auth-row a:hover { color: #fff; }
+.header-auth-row .pill { border: 2px solid #fff; border-radius: 9999px; height: 34px; padding: 0 14px; display: flex; align-items: center; justify-content: center; }
+.header-auth-row .logo-circle { width: 44px; height: 44px; object-fit: cover; border-radius: 50%; background: #fff; padding: 2px; }
+@media (max-width: 768px) {
+  .header-auth-row { justify-content: center; gap: 8px; }
+  .header-auth-row > div { justify-content: center; gap: 8px; width: 100%; }
+  .header-auth-row a { font-size: 12px; }
+  .header-auth-row .pill { height: 28px; padding: 0 10px; font-size: 12px; }
+}
+</style>
+
+<div class="header-auth-outer">
+    <div class="header-auth-row">
+        {{-- LEFT: logo + left-side links --}}
+        <div>
+            <a href="{{ url('/') }}">
+                <img src="{{ asset('img/logo-small.png') }}" alt="Logo" class="logo-circle">
+            </a>
+            @if(config('constants.SHOW_REPAIR_STATUS_LOGIN_SCREEN') && Route::has('repair-status'))
+                <a href="{{ action([\Modules\Repair\Http\Controllers\CustomerRepairStatusController::class, 'index']) }}">
+                    @lang('repair::lang.repair_status')
+                </a>
+            @endif
+            @if(Route::has('member_scanner'))
+                <a href="{{ action([\Modules\Gym\Http\Controllers\MemberController::class, 'member_scanner']) }}">
+                    @lang('gym::lang.gym_member_profile')
+                </a>
+            @endif
+        </div>
+
+        {{-- RIGHT: Register + Pricing + Sign In + Language --}}
+        <div>
+            @if (!($request->segment(1) == 'business' && $request->segment(2) == 'register'))
+                @if (config('constants.allow_registration'))
+                    <div class="pill">
+                        <a href="{{ route('business.getRegister') }}@if(!empty(request()->lang)){{ '?lang='.request()->lang }}@endif">
+                            {{ __('business.register') }}
+                        </a>
+                    </div>
+                    @if (Route::has('pricing') && config('app.env') != 'demo' && $request->segment(1) != 'pricing')
+                        <a href="{{ action([\Modules\Superadmin\Http\Controllers\PricingController::class, 'index']) }}">
+                            @lang('superadmin::lang.pricing')
+                        </a>
+                    @endif
+                @endif
+            @endif
+            @if ($request->segment(1) != 'login')
+                <a href="{{ action([\App\Http\Controllers\Auth\LoginController::class, 'login']) }}@if(!empty(request()->lang)){{ '?lang='.request()->lang }}@endif">
+                    {{ __('business.sign_in') }}
+                </a>
+            @endif
+            @include('layouts.partials.language_btn')
+        </div>
+    </div>
+</div>

@@ -1,0 +1,11 @@
+{
+    "name": "Gym",
+    "alias": "gym",
+    "description": "Gym Management module for UltimatePOS",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\Gym\\Providers\\GymServiceProvider"
+    ],
+    "files": []
+}

@@ -1,0 +1,14 @@
+{
+    "name": "Restore",
+    "alias": "restore",
+    "description": "Module to restore database and file backups created by Spatie Laravel Backup.",
+    "keywords": ["backup", "restore", "database", "files"],
+    "active": 1,
+    "order": 0,
+    "providers": [
+        "Modules\\Restore\\Providers\\RestoreServiceProvider"
+    ],
+    "aliases": {},
+    "files": [],
+    "requires": []
+}
