@@ -100,7 +100,7 @@ async function ensureDatabaseRunning() {
     log(`MySQL process error: ${err.message}`);
   });
 
-  for (let i = 0; i < 20; i++) {
+  for (let i = 0; i < 40; i++) {
     await new Promise((r) => setTimeout(r, 500));
     if (await isPortOpen(MYSQL_PORT)) {
       log('MySQL is now ready.');
@@ -131,7 +131,7 @@ async function ensureBackendRunning() {
     log(`PHP server error: ${err.message}`);
   });
 
-  for (let i = 0; i < 30; i++) {
+  for (let i = 0; i < 40; i++) {
     await new Promise((r) => setTimeout(r, 500));
     if (await isPortOpen(PORT)) {
       log('PHP server is now ready.');
@@ -184,6 +184,13 @@ function createWindow() {
   const targetUrl = `http://127.0.0.1:${PORT}/login`;
   log(`Loading POS URL: ${targetUrl}`);
   mainWindow.loadURL(targetUrl);
+
+  mainWindow.webContents.on('did-fail-load', (event, errorCode, errorDescription) => {
+    log(`Page failed to load (${errorCode}: ${errorDescription}). Retrying in 2 seconds...`);
+    setTimeout(() => {
+      if (mainWindow) mainWindow.loadURL(targetUrl);
+    }, 2000);
+  });
 
   mainWindow.on('closed', () => {
     log('Main window closed');
