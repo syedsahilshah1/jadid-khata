@@ -14,8 +14,6 @@ vendor/
 *.sql
 
 # Secrets & Environment
-.env
-**/.env
 
 # Logs & Framework cache
 *.log
@@ -24,3 +22,4 @@ vendor/
 **/storage/framework/sessions/*
 **/storage/framework/views/*
 
+config.bat
