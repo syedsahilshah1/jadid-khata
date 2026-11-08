@@ -4,8 +4,8 @@
   "description": "Jadid Khata - Offline Desktop POS",
   "main": "electron/main.js",
   "scripts": {
-    "start": "node init && node electron/runner.js",
-    "build:exe": "node init && electron-builder --win --x64"
+    "start": "node electron/runner.js",
+    "build:exe": "electron-builder --win --x64"
   },
   "build": {
     "appId": "com.jadidkhata.pos",
