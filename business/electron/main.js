@@ -4,6 +4,13 @@ const { spawn } = require('child_process');
 const net = require('net');
 const fs = require('fs');
 
+process.on('uncaughtException', (err) => {
+  log(`Uncaught Exception: ${err ? (err.stack || err.message) : err}`);
+});
+process.on('unhandledRejection', (reason) => {
+  log(`Unhandled Rejection: ${reason}`);
+});
+
 delete process.env.ELECTRON_RUN_AS_NODE;
 
 const LOG_FILE = path.join(__dirname, 'electron.log');
@@ -28,8 +35,17 @@ function resolveProjectDir() {
   if (app && app.isPackaged && process.resourcesPath) {
     const unpackedApp = path.join(process.resourcesPath, 'app');
     if (fs.existsSync(unpackedApp)) return unpackedApp;
+    const asarUnpacked = path.join(process.resourcesPath, 'app.asar.unpacked');
+    if (fs.existsSync(asarUnpacked)) return asarUnpacked;
   }
-  return path.resolve(__dirname, '..');
+  let resolved = path.resolve(__dirname, '..');
+  if (resolved.includes('app.asar')) {
+    const candidateUnpacked = resolved.replace('app.asar', 'app.asar.unpacked');
+    if (fs.existsSync(candidateUnpacked)) return candidateUnpacked;
+    const candidateApp = resolved.replace('app.asar', 'app');
+    if (fs.existsSync(candidateApp)) return candidateApp;
+  }
+  return resolved;
 }
 const PROJECT_DIR = resolveProjectDir();
 
@@ -53,18 +69,42 @@ function isPortOpen(port, host = '127.0.0.1') {
 }
 
 function getPhpPath() {
-  const bundled = path.join(PROJECT_DIR, 'bin', 'php', 'php.exe');
-  if (fs.existsSync(bundled)) return bundled;
-  const xampp = 'C:\\xampp\\php\\php.exe';
-  if (fs.existsSync(xampp)) return xampp;
+  const candidates = [];
+  if (app && app.isPackaged && process.resourcesPath) {
+    candidates.push(path.join(process.resourcesPath, 'bin', 'php', 'php.exe'));
+    candidates.push(path.join(process.resourcesPath, 'app', 'bin', 'php', 'php.exe'));
+    candidates.push(path.join(process.resourcesPath, 'app.asar.unpacked', 'bin', 'php', 'php.exe'));
+  }
+  candidates.push(path.join(PROJECT_DIR, 'bin', 'php', 'php.exe'));
+  candidates.push(path.join(PROJECT_DIR.replace('app.asar', 'app'), 'bin', 'php', 'php.exe'));
+  candidates.push(path.join(PROJECT_DIR.replace('app.asar', 'app.asar.unpacked'), 'bin', 'php', 'php.exe'));
+  candidates.push('C:\\xampp\\php\\php.exe');
+
+  for (const c of candidates) {
+    if (!c.includes('app.asar') && fs.existsSync(c)) {
+      return c;
+    }
+  }
   return 'php';
 }
 
 function getMysqlPath() {
-  const bundled = path.join(PROJECT_DIR, 'bin', 'mysql', 'bin', 'mysqld.exe');
-  if (fs.existsSync(bundled)) return bundled;
-  const xampp = 'C:\\xampp\\mysql\\bin\\mysqld.exe';
-  if (fs.existsSync(xampp)) return xampp;
+  const candidates = [];
+  if (app && app.isPackaged && process.resourcesPath) {
+    candidates.push(path.join(process.resourcesPath, 'bin', 'mysql', 'bin', 'mysqld.exe'));
+    candidates.push(path.join(process.resourcesPath, 'app', 'bin', 'mysql', 'bin', 'mysqld.exe'));
+    candidates.push(path.join(process.resourcesPath, 'app.asar.unpacked', 'bin', 'mysql', 'bin', 'mysqld.exe'));
+  }
+  candidates.push(path.join(PROJECT_DIR, 'bin', 'mysql', 'bin', 'mysqld.exe'));
+  candidates.push(path.join(PROJECT_DIR.replace('app.asar', 'app'), 'bin', 'mysql', 'bin', 'mysqld.exe'));
+  candidates.push(path.join(PROJECT_DIR.replace('app.asar', 'app.asar.unpacked'), 'bin', 'mysql', 'bin', 'mysqld.exe'));
+  candidates.push('C:\\xampp\\mysql\\bin\\mysqld.exe');
+
+  for (const c of candidates) {
+    if (!c.includes('app.asar') && fs.existsSync(c)) {
+      return c;
+    }
+  }
   return null;
 }
 
@@ -95,10 +135,15 @@ async function ensureDatabaseRunning() {
     args.unshift(`--defaults-file=${myIni}`);
   }
 
-  mysqlProcess = spawn(mysqldPath, args, { detached: false, stdio: 'ignore' });
-  mysqlProcess.on('error', (err) => {
-    log(`MySQL process error: ${err.message}`);
-  });
+  try {
+    mysqlProcess = spawn(mysqldPath, args, { detached: false, stdio: 'ignore' });
+    mysqlProcess.on('error', (err) => {
+      log(`MySQL process error: ${err.message}`);
+    });
+  } catch (err) {
+    log(`MySQL spawn exception: ${err.message}`);
+    return false;
+  }
 
   for (let i = 0; i < 40; i++) {
     await new Promise((r) => setTimeout(r, 500));
@@ -122,14 +167,19 @@ async function ensureBackendRunning() {
   const phpPath = getPhpPath();
   log(`Starting PHP server from: ${phpPath}`);
 
-  phpProcess = spawn(phpPath, ['artisan', 'serve', `--port=${PORT}`], {
-    cwd: PROJECT_DIR,
-    detached: false,
-    stdio: 'ignore'
-  });
-  phpProcess.on('error', (err) => {
-    log(`PHP server error: ${err.message}`);
-  });
+  try {
+    phpProcess = spawn(phpPath, ['artisan', 'serve', `--port=${PORT}`], {
+      cwd: PROJECT_DIR,
+      detached: false,
+      stdio: 'ignore'
+    });
+    phpProcess.on('error', (err) => {
+      log(`PHP server error: ${err.message}`);
+    });
+  } catch (err) {
+    log(`PHP spawn exception: ${err.message}`);
+    return false;
+  }
 
   for (let i = 0; i < 40; i++) {
     await new Promise((r) => setTimeout(r, 500));
