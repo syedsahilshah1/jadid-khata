@@ -61,10 +61,24 @@
 </head>
 <body>
     <div class="card">
-        <h1>You're offline</h1>
-        <p>{{ config('app.name', 'UltimatePOS') }} needs an internet connection. Please reconnect and try again.</p>
-        <a href="{{ url('/') }}">Retry</a>
-        <small>{{ config('app.name', 'UltimatePOS') }}</small>
+        <h1>Connecting to {{ config('app.name', 'Jadid Khata') }}</h1>
+        <p>Starting local services. Please wait...</p>
+        <a href="{{ url('/login') }}" id="retryBtn">Retry</a>
+        <small>{{ config('app.name', 'Jadid Khata') }}</small>
     </div>
+    <script>
+        // Auto-check local server and redirect to /login immediately when ready
+        function checkServer() {
+            fetch('/login', { method: 'HEAD', cache: 'no-store' })
+                .then(function(res) {
+                    if (res.ok || res.status < 500) {
+                        window.location.href = '/login';
+                    }
+                })
+                .catch(function() {});
+        }
+        setInterval(checkServer, 1500);
+        checkServer();
+    </script>
 </body>
 </html>

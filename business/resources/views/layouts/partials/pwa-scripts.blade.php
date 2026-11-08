@@ -5,6 +5,26 @@
 @endphp
 <script>
 (function () {
+    // If inside Electron desktop app, do not use PWA Service Worker
+    const isElectron = navigator.userAgent.indexOf('Electron') !== -1;
+    if (isElectron) {
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.getRegistrations().then(function(registrations) {
+                for (var registration of registrations) {
+                    registration.unregister();
+                }
+            });
+        }
+        if ('caches' in window) {
+            caches.keys().then(function(names) {
+                for (var name of names) {
+                    caches.delete(name);
+                }
+            });
+        }
+        return;
+    }
+
     const localHosts = ['localhost', '127.0.0.1', '::1'];
     const isLocalhost = localHosts.indexOf(window.location.hostname) !== -1;
     const canUseServiceWorker = !window.location.pathname.includes("/pos/") && 'serviceWorker' in navigator && (window.location.protocol === 'https:' || isLocalhost);

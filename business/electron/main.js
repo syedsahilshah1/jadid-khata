@@ -160,7 +160,7 @@ function runBackgroundSync() {
   });
 }
 
-function createWindow() {
+async function createWindow() {
   log('Creating main BrowserWindow...');
   mainWindow = new BrowserWindow({
     width: 1440,
@@ -177,6 +177,15 @@ function createWindow() {
   });
 
   mainWindow.maximize();
+
+  // Clear any stale Service Workers or cache storage from previous sessions
+  try {
+    await mainWindow.webContents.session.clearStorageData({
+      storages: ['serviceworkers', 'cachestorage']
+    });
+  } catch (e) {
+    log(`Session clear error: ${e.message}`);
+  }
 
   // Open DevTools in separate window so errors can be inspected
   mainWindow.webContents.openDevTools({ mode: 'detach' });
@@ -228,7 +237,7 @@ app.whenReady().then(async () => {
   try {
     await ensureDatabaseRunning();
     await ensureBackendRunning();
-    createWindow();
+    await createWindow();
 
     // Run auto-sync every 2 minutes
     syncInterval = setInterval(runBackgroundSync, 2 * 60 * 1000);
