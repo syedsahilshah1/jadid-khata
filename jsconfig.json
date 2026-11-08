@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "commonjs",
+    "allowJs": true,
+    "checkJs": false,
+    "noEmit": true
+  },
+  "exclude": [
+    "business/node_modules",
+    "business/vendor",
+    "business/public",
+    "business/dist-desktop",
+    "business/storage",
+    "business/bin",
+    "business/UltimatePOS-CodeBase-V7.3-by-Omkar"
+  ]
+}
