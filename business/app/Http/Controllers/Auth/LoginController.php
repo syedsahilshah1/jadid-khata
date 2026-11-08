@@ -167,6 +167,13 @@ class LoginController extends Controller
                     ['success' => 0, 'msg' => __('lang_v1.business_dont_have_crm_subscription')]
                 );
         }
+
+        // Auto-sync live catalog and products from cloud on login
+        try {
+            \Illuminate\Support\Facades\Artisan::call('pos:sync');
+        } catch (\Exception $e) {
+            \Log::warning('Login pos:sync error: ' . $e->getMessage());
+        }
     }
 
     protected function redirectTo()
