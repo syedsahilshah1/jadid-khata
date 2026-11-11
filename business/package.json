@@ -4,8 +4,8 @@
   "description": "Jadid Khata - Offline Desktop POS",
   "main": "electron/main.js",
   "scripts": {
-    "start": "node electron/runner.js",
-    "build:exe": "electron-builder --win --x64"
+    "start": "node init && node electron/runner.js",
+    "build:exe": "node init && electron-builder --win --x64"
   },
   "build": {
     "appId": "com.jadidkhata.pos",
@@ -24,8 +24,13 @@
       "createStartMenuShortcut": true,
       "shortcutName": "Jadid Khata POS"
     },
+    "extraResources": [
+      {
+        "from": "bin",
+        "to": "bin"
+      }
+    ],
     "files": [
-      "bin/**/*",
       "electron/**/*",
       "app/**/*",
       "bootstrap/**/*",
@@ -38,16 +43,10 @@
       "!public/error_log*",
       "!public/titi.php",
       "!public/z.php",
-      "!public/**/*.sql",
-      "!**/*.sql",
-      "!bin/mysql/data/ib_logfile*",
-      "!bin/mysql/data/*.err",
-      "!bin/mysql/data/*.pid",
-      "!**/tests/**/*",
-      "!storage/logs/**/*",
       "resources/**/*",
       "routes/**/*",
       "storage/**/*",
+      "!storage/logs/**/*",
       "vendor/**/*",
       ".env",
       "artisan",

@@ -13,11 +13,21 @@ process.on('unhandledRejection', (reason) => {
 
 delete process.env.ELECTRON_RUN_AS_NODE;
 
-const LOG_FILE = path.join(__dirname, 'electron.log');
+function getLogFile() {
+  try {
+    return path.join(app.getPath('userData'), 'electron.log');
+  } catch (e) {
+    return path.join(__dirname, 'electron.log');
+  }
+}
+
 function log(msg) {
   const line = `[${new Date().toISOString()}] ${msg}\n`;
   try {
-    fs.appendFileSync(LOG_FILE, line);
+    fs.appendFileSync(getLogFile(), line);
+  } catch (e) {}
+  try {
+    fs.appendFileSync(path.join(__dirname, 'electron.log'), line);
   } catch (e) {}
   console.log(msg);
 }
@@ -136,7 +146,9 @@ async function ensureDatabaseRunning() {
   }
 
   try {
-    mysqlProcess = spawn(mysqldPath, args, { detached: false, stdio: 'ignore' });
+    mysqlProcess = spawn(mysqldPath, args, { detached: false, stdio: ['ignore', 'pipe', 'pipe'] });
+    mysqlProcess.stdout.on('data', (d) => log(`[MySQL] ${d.toString().trim()}`));
+    mysqlProcess.stderr.on('data', (d) => log(`[MySQL Error] ${d.toString().trim()}`));
     mysqlProcess.on('error', (err) => {
       log(`MySQL process error: ${err.message}`);
     });
@@ -171,8 +183,10 @@ async function ensureBackendRunning() {
     phpProcess = spawn(phpPath, ['artisan', 'serve', `--port=${PORT}`], {
       cwd: PROJECT_DIR,
       detached: false,
-      stdio: 'ignore'
+      stdio: ['ignore', 'pipe', 'pipe']
     });
+    phpProcess.stdout.on('data', (d) => log(`[PHP] ${d.toString().trim()}`));
+    phpProcess.stderr.on('data', (d) => log(`[PHP Error] ${d.toString().trim()}`));
     phpProcess.on('error', (err) => {
       log(`PHP server error: ${err.message}`);
     });
